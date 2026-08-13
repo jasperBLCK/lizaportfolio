@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KEC — Елизавета Козлова / Digital Media Designer</title>
-<meta name="description" content="Портфолио Елизаветы Козловой (KEC) — дизайнера цифровых медиа. Постеры, коллажи, экспериментальная типографика.">
+<meta name="description" id="metaDesc" content="Портфолио Елизаветы Козловой (KEC) — дизайнера цифровых медиа. Постеры, коллажи, экспериментальная типографика.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -293,6 +293,26 @@ section{padding:130px 32px;position:relative}
 .about-facts b{color:var(--bg)}
 .about-facts .row{display:flex;justify-content:space-between;border-bottom:1px dashed #3a3a40;padding:6px 0}
 
+/* ---------- services ---------- */
+#services{border-top:1px solid var(--line)}
+.services-list{max-width:1280px;margin:0 auto;border-top:1px solid var(--fg)}
+.service{
+  display:grid;grid-template-columns:minmax(220px,1fr) 2fr minmax(160px,auto);
+  gap:18px 34px;align-items:baseline;padding:30px 0;border-bottom:1px solid var(--line);
+}
+.service h3{font-size:clamp(24px,3.2vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1}
+.service .desc{font-size:16px;line-height:1.6;color:#55534e}
+.service .price{
+  font-family:var(--mono);font-size:15px;font-weight:500;justify-self:end;text-align:right;
+  background:var(--lime);border:1px solid var(--fg);padding:8px 14px;transform:rotate(-1deg);
+}
+.service .note{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:10px}
+.services-note{max-width:1280px;margin:26px auto 0;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){
+  .service{grid-template-columns:1fr;gap:10px}
+  .service .price{justify-self:start;text-align:left}
+}
+
 /* ---------- contact ---------- */
 #contact{text-align:center;padding-bottom:70px}
 .contact-big{
@@ -335,9 +355,10 @@ footer{
 <nav>
   <a class="logo glitch" data-text="KEC*" href="#">KEC*</a>
   <div class="links">
-    <a href="#works">Работы</a>
-    <a href="#about">Обо мне</a>
-    <a href="#contact">Контакт</a>
+    <a href="#works" data-nav="works">Работы</a>
+    <a href="#about" data-nav="about">Обо мне</a>
+    <a href="#services" data-nav="services">Услуги</a>
+    <a href="#contact" data-nav="contact">Контакт</a>
   </div>
 </nav>
 
@@ -453,8 +474,20 @@ footer{
   </div>
 </section>
 
+<section id="services">
+  <div class="sec-head">
+    <div>
+      <span class="sec-tag">03 / services</span>
+      <h2 class="sec-title rv">УСЛУ<span class="stroke">ГИ</span></h2>
+    </div>
+    <span class="sec-count"></span>
+  </div>
+  <div class="services-list"></div>
+  <p class="services-note"></p>
+</section>
+
 <section id="contact">
-  <span class="sec-tag">03 / contact</span>
+  <span class="sec-tag">04 / contact</span>
   <a class="contact-big glitch rv" data-text="НАПИШИ МНЕ" href="https://t.me/plampun" target="_blank" rel="noopener">НАПИШИ МНЕ</a>
   <div class="socials rv">
     <a class="hot" href="https://t.me/plampun" target="_blank" rel="noopener">Заказ / связь → @plampun</a>
@@ -488,12 +521,108 @@ footer{
   },{passive:true});
 })();
 
-// ---- custom cursor ----
-(function(){
-  var c=document.getElementById('cursor'),lbl=c.querySelector('.lbl');
-  document.addEventListener('mousemove',function(e){
-    c.style.left=e.clientX+'px';c.style.top=e.clientY+'px';
+// ---- content from content.json ----
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"]/g,function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];
   });
+}
+function splitTitle(t){
+  t=String(t||'');
+  if(t.length<4)return esc(t);
+  var cut=t.length-2;
+  return esc(t.slice(0,cut))+'<span class="stroke">'+esc(t.slice(cut))+'</span>';
+}
+function applyContent(c){
+  if(!c)return;
+  var site=c.site||{},hero=c.hero||{},works=c.works||{},about=c.about||{},
+      services=c.services||{},contact=c.contact||{},footer=c.footer||{},nav=c.nav||{};
+
+  if(site.title)document.title=site.title;
+  if(site.description)document.getElementById('metaDesc').setAttribute('content',site.description);
+  var logo=document.querySelector('nav .logo');
+  if(site.logo){logo.textContent=site.logo;logo.setAttribute('data-text',site.logo)}
+  Object.keys(nav).forEach(function(k){
+    var a=document.querySelector('nav .links a[data-nav="'+k+'"]');
+    if(a&&nav[k])a.textContent=nav[k];
+  });
+
+  var ht=document.getElementById('heroTitle');
+  if(hero.title){ht.textContent=hero.title;ht.setAttribute('data-text',hero.title)}
+  var hp=document.querySelector('.hero-photo img');
+  if(hero.photo){hp.src=hero.photo;hp.alt=(hero.name||'')+' — '+(hero.title||'')}
+  if(hero.name)document.querySelector('.hero-sub .name').textContent=hero.name;
+  if(hero.role)document.querySelector('.hero-sub .role').textContent=hero.role;
+  if(hero.meta)document.querySelector('.hero-meta').innerHTML=String(hero.meta).split('\n').join('<br>');
+
+  var mqItems=(hero.marquee&&hero.marquee.length)?hero.marquee:['KEC'];
+  var half=mqItems.map(function(s){return '<span>'+esc(s)+' ✳</span>'}).join('');
+  document.getElementById('mq').innerHTML=half+half+half+half;
+
+  var wSec=document.getElementById('works');
+  if(works.tag)wSec.querySelector('.sec-tag').textContent=works.tag;
+  if(works.title)wSec.querySelector('.sec-title').innerHTML=splitTitle(works.title);
+  var wItems=works.items||[];
+  wSec.querySelector('.sec-count').textContent='( '+(wItems.length<10?'0':'')+wItems.length+' )';
+  wSec.querySelector('.works-grid').innerHTML=wItems.map(function(w,i){
+    var n=(i+1<10?'0':'')+(i+1);
+    return '<figure class="work" data-full="'+esc(w.image)+'">'+
+      '<div class="frame"><span class="num">'+n+'</span>'+
+      '<img src="'+esc(w.image)+'" alt="'+esc(w.title)+'" loading="lazy">'+
+      '<div class="view"><span>смотреть +</span></div></div>'+
+      '<figcaption class="cap"><b>'+esc(w.title)+'</b><span>'+esc(w.meta)+'</span></figcaption>'+
+      '</figure>';
+  }).join('');
+
+  var aSec=document.getElementById('about');
+  if(about.tag)aSec.querySelector('.sec-tag').textContent=about.tag;
+  if(about.title)aSec.querySelector('.sec-title').textContent=about.title;
+  if(about.text)aSec.querySelector('.about-text').innerHTML=about.text;
+  if(about.facts)aSec.querySelector('.about-facts').innerHTML=about.facts.map(function(f){
+    return '<div class="row"><span>'+esc(f.label)+'</span><b>'+esc(f.value)+'</b></div>';
+  }).join('');
+
+  var sSec=document.getElementById('services');
+  var sItems=services.items||[];
+  if(!sItems.length){sSec.style.display='none';}
+  else{
+    sSec.style.display='';
+    if(services.tag)sSec.querySelector('.sec-tag').textContent=services.tag;
+    if(services.title)sSec.querySelector('.sec-title').innerHTML=splitTitle(services.title);
+    sSec.querySelector('.sec-count').textContent='( '+(sItems.length<10?'0':'')+sItems.length+' )';
+    sSec.querySelector('.services-list').innerHTML=sItems.map(function(s){
+      return '<article class="service rv"><h3>'+esc(s.title)+'</h3>'+
+        '<div class="desc">'+esc(s.description)+
+        (s.note?'<span class="note">'+esc(s.note)+'</span>':'')+'</div>'+
+        '<div class="price">'+esc(s.price)+'</div></article>';
+    }).join('');
+    sSec.querySelector('.services-note').textContent=services.note||'';
+  }
+
+  var cSec=document.getElementById('contact');
+  if(contact.tag)cSec.querySelector('.sec-tag').textContent=contact.tag;
+  var big=cSec.querySelector('.contact-big');
+  if(contact.big){big.textContent=contact.big;big.setAttribute('data-text',contact.big)}
+  if(contact.href)big.href=contact.href;
+  if(contact.links)cSec.querySelector('.socials').innerHTML=contact.links.map(function(l){
+    return '<a class="'+(l.hot?'hot':'')+'" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.label)+'</a>';
+  }).join('');
+
+  var fSpans=document.querySelectorAll('footer span');
+  if(footer.left)fSpans[0].textContent=footer.left;
+  if(footer.right)fSpans[1].textContent=footer.right;
+}
+
+// ---- custom cursor ----
+var cursorTracking=false;
+function initCursor(){
+  var c=document.getElementById('cursor'),lbl=c.querySelector('.lbl');
+  if(!cursorTracking){
+    cursorTracking=true;
+    document.addEventListener('mousemove',function(e){
+      c.style.left=e.clientX+'px';c.style.top=e.clientY+'px';
+    });
+  }
   document.querySelectorAll('a,.work').forEach(function(el){
     el.addEventListener('mouseenter',function(){
       c.classList.add('hov');
@@ -501,22 +630,15 @@ footer{
     });
     el.addEventListener('mouseleave',function(){c.classList.remove('hov')});
   });
-})();
-
-// ---- marquee ----
-(function(){
-  var items=['digital media','glitch','типографика','collage','poster design','эксперимент','KEC','motion'];
-  var half=items.map(function(s){return '<span>'+s+' ✳</span>'}).join('');
-  document.getElementById('mq').innerHTML=half+half+half+half;
-})();
+}
 
 // ---- scroll reveal ----
-(function(){
+function initReveal(){
   var io=new IntersectionObserver(function(es){
     es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});
   },{threshold:0.12});
   document.querySelectorAll('.rv,.work').forEach(function(el){io.observe(el)});
-})();
+}
 
 // ---- hero: random glitch bursts + magnetic tilt ----
 (function(){
@@ -606,7 +728,7 @@ footer{
 })();
 
 // ---- lightbox (site-styled frame) ----
-(function(){
+function initLightbox(){
   var lb=document.getElementById('lightbox'),img=lb.querySelector('.lb-img img'),
       title=document.getElementById('lbTitle'),meta=document.getElementById('lbMeta'),
       frame=lb.querySelector('.lb-frame');
@@ -629,7 +751,28 @@ footer{
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape'&&lb.classList.contains('open'))close();
   });
-})();
+}
+
+// ---- preview from admin panel ----
+addEventListener('message',function(e){
+  if(e.origin!==location.origin||!e.data||e.data.type!=='kec-preview')return;
+  try{
+    applyContent(JSON.parse(e.data.content));
+    initCursor();initReveal();initLightbox();
+    document.querySelectorAll('.rv,.work').forEach(function(el){el.classList.add('vis')});
+  }catch(err){}
+});
+
+// ---- boot ----
+fetch('content.json?ts='+Date.now())
+  .then(function(r){return r.ok?r.json():null})
+  .then(applyContent)
+  .catch(function(){})
+  .then(function(){
+    initCursor();initReveal();initLightbox();
+    if(window.opener&&/[?&]preview=1/.test(location.search))
+      window.opener.postMessage({type:'kec-preview-ready'},location.origin);
+  });
 </script>
 </body>
 </html>
