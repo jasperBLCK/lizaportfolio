@@ -68,12 +68,34 @@
     "title": "ОБО МНЕ",
     "text": "Привет, я <em>Лиза</em> — дизайнер цифровых медиа. Работаю на стыке <em>типографики</em>, коллажа и глитч-эстетики. Люблю ломать сетки, смешивать языки и находить красоту в цифровом шуме.",
     "facts": [
-      { "label": "Имя", "value": "Елизавета Козлова / KEC" },
-      { "label": "Возраст", "value": "20" },
-      { "label": "Фокус", "value": "Digital Media Design" },
-      { "label": "Медиа", "value": "Постеры, коллажи, motion" },
-      { "label": "Инструменты", "value": "PS / AI / AE / Figma" },
-      { "label": "Статус", "value": "Open to work" }
+      {
+        "label": "Имя",
+        "value": "Елизавета Козлова / KEC"
+      },
+      {
+        "label": "Возраст",
+        "value": "20"
+      },
+      {
+        "label": "Фокус",
+        "value": "Digital Media Design"
+      },
+      {
+        "label": "Медиа",
+        "value": "Постеры, коллажи, motion"
+      },
+      {
+        "label": "Инструменты",
+        "value": "PS / AI / AE / Figma"
+      },
+      {
+        "label": "Статус",
+        "value": "Open to work"
+      },
+      {
+        "label": "Чувство",
+        "value": "Поху"
+      }
     ]
   },
   "services": {
@@ -106,8 +128,16 @@
     "big": "НАПИШИ МНЕ",
     "href": "https://t.me/plampun",
     "links": [
-      { "label": "Заказ / связь → @plampun", "url": "https://t.me/plampun", "hot": true },
-      { "label": "TG-канал → @KEC_lisa", "url": "https://t.me/KEC_lisa", "hot": false }
+      {
+        "label": "Заказ / связь → @plampun",
+        "url": "https://t.me/plampun",
+        "hot": true
+      },
+      {
+        "label": "TG-канал → @KEC_lisa",
+        "url": "https://t.me/KEC_lisa",
+        "hot": false
+      }
     ]
   },
   "footer": {
