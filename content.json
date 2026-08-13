@@ -1,0 +1,117 @@
+{
+  "site": {
+    "title": "KEC — Елизавета Козлова / Digital Media Designer",
+    "description": "Портфолио Елизаветы Козловой (KEC) — дизайнера цифровых медиа. Постеры, коллажи, экспериментальная типографика.",
+    "logo": "KEC*"
+  },
+  "nav": {
+    "works": "Работы",
+    "about": "Обо мне",
+    "services": "Услуги",
+    "contact": "Контакт"
+  },
+  "hero": {
+    "title": "KEC",
+    "name": "Елизавета Козлова",
+    "role": "digital media designer",
+    "photo": "assets/works/work-01.jpg",
+    "meta": "<b>20 y.o.</b> — based in RU\nposters / collage / type\n<b>available for work</b>",
+    "marquee": [
+      "digital media",
+      "glitch",
+      "типографика",
+      "collage",
+      "poster design",
+      "эксперимент",
+      "KEC",
+      "motion"
+    ]
+  },
+  "works": {
+    "tag": "01 / selected works",
+    "title": "РАБОТЫ",
+    "items": [
+      {
+        "title": "БУДЬ / BUDDISM",
+        "meta": "poster / type — 2025",
+        "image": "assets/works/work-02.jpg"
+      },
+      {
+        "title": "NERD",
+        "meta": "collage / type — 2022",
+        "image": "assets/works/work-06.jpg"
+      },
+      {
+        "title": "The World 2026",
+        "meta": "experimental type — 2026",
+        "image": "assets/works/work-04.jpg"
+      },
+      {
+        "title": "Freak / Boucles Fluides",
+        "meta": "poster / collage — 2025",
+        "image": "assets/works/work-07.jpg"
+      },
+      {
+        "title": "Facing The World",
+        "meta": "archive collage — 2024",
+        "image": "assets/works/work-05.jpg"
+      },
+      {
+        "title": "Singing a Song",
+        "meta": "glitch / poster — 2024",
+        "image": "assets/works/work-03.jpg"
+      }
+    ]
+  },
+  "about": {
+    "tag": "02 / about",
+    "title": "ОБО МНЕ",
+    "text": "Привет, я <em>Лиза</em> — дизайнер цифровых медиа. Работаю на стыке <em>типографики</em>, коллажа и глитч-эстетики. Люблю ломать сетки, смешивать языки и находить красоту в цифровом шуме.",
+    "facts": [
+      { "label": "Имя", "value": "Елизавета Козлова / KEC" },
+      { "label": "Возраст", "value": "20" },
+      { "label": "Фокус", "value": "Digital Media Design" },
+      { "label": "Медиа", "value": "Постеры, коллажи, motion" },
+      { "label": "Инструменты", "value": "PS / AI / AE / Figma" },
+      { "label": "Статус", "value": "Open to work" }
+    ]
+  },
+  "services": {
+    "tag": "03 / services",
+    "title": "УСЛУГИ",
+    "note": "Цены указаны за одну единицу работы, сроки обсуждаются индивидуально.",
+    "items": [
+      {
+        "title": "Постер",
+        "description": "Авторский постер: типографика, коллаж, глитч-обработка. 2 правки включено.",
+        "price": "от 3 000 ₽",
+        "note": "3–5 дней"
+      },
+      {
+        "title": "Обложка релиза",
+        "description": "Обложка для трека или альбома + версии под площадки и сторис.",
+        "price": "от 4 500 ₽",
+        "note": "4–7 дней"
+      },
+      {
+        "title": "Оформление соцсетей",
+        "description": "Комплект шаблонов для постов и сторис в едином визуальном языке.",
+        "price": "от 7 000 ₽",
+        "note": "от 7 дней"
+      }
+    ]
+  },
+  "contact": {
+    "tag": "04 / contact",
+    "big": "НАПИШИ МНЕ",
+    "href": "https://t.me/plampun",
+    "links": [
+      { "label": "Заказ / связь → @plampun", "url": "https://t.me/plampun", "hot": true },
+      { "label": "TG-канал → @KEC_lisa", "url": "https://t.me/KEC_lisa", "hot": false }
+    ]
+  },
+  "footer": {
+    "left": "© 2026 KEC — Елизавета Козлова",
+    "right": "designed in digital noise"
+  }
+}
