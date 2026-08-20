@@ -59,6 +59,8 @@ label{display:block;font-family:var(--mono);font-size:11px;text-transform:upperc
   position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:space-between;
   align-items:center;gap:16px;flex-wrap:wrap;padding:14px 24px;background:var(--fg);color:var(--bg);
 }
+.savebar button:not(.primary){background:transparent;border-color:var(--bg);color:var(--bg)}
+.savebar button:not(.primary):hover{background:var(--bg);color:var(--fg)}
 .savebar .status{font-family:var(--mono);font-size:12px;color:var(--lime)}
 .savebar .status.err{color:#ff8ba8}
 .gate{max-width:560px;margin:80px auto;border:1px solid var(--fg);background:#fff;padding:28px;box-shadow:8px 8px 0 var(--fg)}
