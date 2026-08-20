@@ -101,6 +101,9 @@ h2.sec{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 18px}
   <header class="bar">
     <div class="logo">KEC<small>админка контента</small></div>
     <div class="card-actions">
+      <label style="margin:0;display:flex;align-items:center;gap:8px">Ветка
+        <select id="branchSelect" style="font-family:var(--mono);font-size:12px;padding:7px 10px;border:1px solid var(--line);background:#fff"></select>
+      </label>
       <a href="./" target="_blank" rel="noopener"><button class="ghost">Открыть сайт</button></a>
       <button class="ghost" id="reloadBtn">Перезагрузить контент</button>
       <button class="ghost" id="logoutBtn">Выйти</button>
@@ -240,7 +243,8 @@ h2.sec{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 18px}
 </div>
 
 <script>
-var OWNER='jasperBLCK',REPO='lizaportfolio',BRANCH='main',FILE='content.json';
+var OWNER='jasperBLCK',REPO='lizaportfolio',FILE='content.json';
+var BRANCH=localStorage.getItem('kec_admin_branch')||'main';
 var API='https://api.github.com/repos/'+OWNER+'/'+REPO;
 var token='',content=null,fileSha=null,pendingUploads=[];
 
@@ -293,9 +297,10 @@ function login(t,remember){
   return api('').then(function(repo){
     if(!repo.permissions||!repo.permissions.push)throw new Error('У токена нет прав на запись в репозиторий');
     if(remember)localStorage.setItem('kec_admin_token',t);
+    if(repo.default_branch&&!localStorage.getItem('kec_admin_branch'))BRANCH=repo.default_branch;
     $('#gate').classList.add('hidden');
     $('#app').classList.remove('hidden');
-    return loadContent();
+    return loadBranches().then(loadContent);
   }).catch(function(e){
     token='';
     $('#gateStatus').textContent='Ошибка: '+e.message;
@@ -309,6 +314,25 @@ $('#loginBtn').addEventListener('click',function(){
 $('#tokenInput').addEventListener('keydown',function(e){if(e.key==='Enter')$('#loginBtn').click()});
 $('#logoutBtn').addEventListener('click',function(){
   localStorage.removeItem('kec_admin_token');location.reload();
+});
+
+/* ---------- branches ---------- */
+function loadBranches(){
+  return api('/branches?per_page=100').then(function(list){
+    var names=list.map(function(b){return b.name});
+    if(names.indexOf(BRANCH)<0)names.unshift(BRANCH);
+    $('#branchSelect').innerHTML=names.map(function(n){
+      return '<option value="'+escAttr(n)+'"'+(n===BRANCH?' selected':'')+'>'+escAttr(n)+'</option>';
+    }).join('');
+  }).catch(function(){});
+}
+$('#branchSelect').addEventListener('change',function(e){
+  if(pendingUploads.length&&!confirm('Смена ветки сбросит несохранённые правки. Продолжить?')){
+    e.target.value=BRANCH;return;
+  }
+  BRANCH=e.target.value;
+  localStorage.setItem('kec_admin_branch',BRANCH);
+  loadContent();
 });
 
 /* ---------- load / save ---------- */
@@ -360,12 +384,32 @@ function save(){
     fileSha=res.content.sha;
     pendingUploads=[];
     renderAll();
-    status('Сохранено. Сайт обновится через 1–2 минуты.');
+    status('Сохранено в ветку '+BRANCH+'. Жду публикацию…');
+    watchPublish(JSON.stringify(content));
   }).catch(function(e){
     status('Ошибка сохранения: '+e.message,true);
   }).then(function(){$('#saveBtn').disabled=false});
 }
 $('#saveBtn').addEventListener('click',save);
+
+/* Сайт публикуется из одной конкретной ветки (Settings → Pages). Если сохранять в другую,
+   коммит уйдёт, а сайт останется старым — поэтому проверяем реально опубликованный content.json. */
+function watchPublish(expected){
+  var deadline=Date.now()+4*60*1000;
+  (function poll(){
+    fetch('content.json?ts='+Date.now(),{cache:'no-store'})
+      .then(function(r){return r.ok?r.text():''})
+      .then(function(txt){
+        var same=false;
+        try{same=JSON.stringify(JSON.parse(txt))===JSON.stringify(JSON.parse(expected))}catch(e){}
+        if(same){status('Опубликовано — сайт обновился');return}
+        if(Date.now()<deadline){setTimeout(poll,10000);return}
+        status('Сохранено в ветку '+BRANCH+', но сайт так и не обновился. '+
+          'Проверь Settings → Pages: сайт должен собираться из этой же ветки.',true);
+      })
+      .catch(function(){if(Date.now()<deadline)setTimeout(poll,10000)});
+  })();
+}
 
 $('#previewBtn').addEventListener('click',function(){
   collectForm();
