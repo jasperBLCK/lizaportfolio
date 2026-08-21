@@ -82,10 +82,15 @@ h2.sec{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 18px}
   <p>Страница правит контент сайта и сохраняет его прямо в GitHub-репозиторий. Сайт остаётся статичным, GitHub Pages пересобирает его сам за 1–2 минуты после сохранения.</p>
   <ol>
     <li>Открой <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">создание fine-grained токена</a></li>
-    <li>Repository access → Only select repositories → <b>lizaportfolio</b></li>
-    <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+    <li>Repository access → Only select repositories → свой репозиторий с сайтом</li>
+    <li>Permissions → Repository permissions → <b>Contents: Read and write</b> (и <b>Pages: Read-only</b>)</li>
     <li>Скопируй токен и вставь ниже</li>
   </ol>
+  <div class="field">
+    <label>Репозиторий</label>
+    <input id="repoInput" placeholder="владелец/репозиторий">
+    <div class="hint">Подставляется автоматически по адресу сайта — меняй только если правишь чужой репозиторий.</div>
+  </div>
   <div class="field">
     <label>GitHub token</label>
     <input type="password" id="tokenInput" placeholder="github_pat_...">
@@ -101,7 +106,7 @@ h2.sec{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 18px}
 <!-- ---------- editor ---------- -->
 <div id="app" class="hidden">
   <header class="bar">
-    <div class="logo">KEC<small>админка контента</small></div>
+    <div class="logo">KEC<small id="repoLabel">админка контента</small></div>
     <div class="card-actions">
       <label style="margin:0;display:flex;align-items:center;gap:8px">Ветка
         <select id="branchSelect" style="font-family:var(--mono);font-size:12px;padding:7px 10px;border:1px solid var(--line);background:#fff"></select>
@@ -276,10 +281,20 @@ h2.sec{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:0 0 18px}
 </div>
 
 <script>
-var OWNER='jasperBLCK',REPO='lizaportfolio',FILE='content.json';
+var FILE='content.json';
+var DEFAULT_REPO='jasperBLCK/lizaportfolio';
+var SLUG=localStorage.getItem('kec_admin_repo')||guessRepo()||DEFAULT_REPO;
 var BRANCH=localStorage.getItem('kec_admin_branch')||'main';
 var pagesBranch=null;
-var API='https://api.github.com/repos/'+OWNER+'/'+REPO;
+var API='https://api.github.com/repos/'+SLUG;
+
+/* адрес вида user.github.io/repo/ или user.github.io — репозиторий выводится из него */
+function guessRepo(){
+  var m=location.hostname.match(/^([\w-]+)\.github\.io$/i);
+  if(!m)return null;
+  var user=m[1],seg=location.pathname.split('/').filter(Boolean)[0];
+  return user+'/'+(seg&&!/\.html?$/i.test(seg)?seg:user+'.github.io');
+}
 var token='',content=null,fileSha=null,pendingUploads=[];
 
 /* ---------- helpers ---------- */
@@ -325,6 +340,12 @@ function set(obj,path,val){
 }
 
 /* ---------- auth ---------- */
+function setRepo(slug){
+  SLUG=slug;
+  API='https://api.github.com/repos/'+SLUG;
+  localStorage.setItem('kec_admin_repo',SLUG);
+  $('#repoLabel').textContent=SLUG;
+}
 function login(t,remember){
   token=t;
   $('#gateStatus').textContent='Проверяю токен…';
@@ -343,7 +364,10 @@ function login(t,remember){
   });
 }
 $('#loginBtn').addEventListener('click',function(){
-  var t=$('#tokenInput').value.trim();
+  var t=$('#tokenInput').value.trim(),r=$('#repoInput').value.trim().replace(/^https?:\/\/github\.com\//i,'').replace(/\.git$|\/$/,'');
+  if(!/^[\w.-]+\/[\w.-]+$/.test(r)){$('#gateStatus').textContent='Репозиторий в виде владелец/репозиторий';return}
+  if(r!==SLUG)localStorage.removeItem('kec_admin_branch');
+  setRepo(r);
   if(!t){$('#gateStatus').textContent='Вставь токен';return}
   login(t,$('#remember').checked);
 });
@@ -351,6 +375,8 @@ $('#tokenInput').addEventListener('keydown',function(e){if(e.key==='Enter')$('#l
 $('#logoutBtn').addEventListener('click',function(){
   localStorage.removeItem('kec_admin_token');location.reload();
 });
+$('#repoInput').value=SLUG;
+$('#repoLabel').textContent=SLUG;
 
 /* ---------- branches ---------- */
 function loadPagesBranch(){
